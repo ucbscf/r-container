@@ -1,0 +1,94 @@
+FROM rocker/r-ver:3.4.3
+
+ENV TZ America/Los_Angeles
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
+ENV DEBIAN_FRONTEND noninteractive
+
+ENV MRAN_DATE 2018-04-30
+
+RUN apt-get -qq update --yes && \
+    apt-get install --yes tzdata \
+            openmpi-bin \
+            libopenmpi-dev \
+            ssh > /dev/null
+## Note that given difficulties running R across nodes,
+## not clear it's useful to have MPI and SSH in container at this point.
+
+## Dependencies needed for various R packages
+
+RUN apt-get install --yes libgsl-dev \
+            libglu1-mesa-dev \
+            libfftw3-dev \
+            coinor-libsymphony3 \
+            coinor-libsymphony-dev \
+            coinor-libcgl-dev \
+            libzmq3-dev \
+            libglpk-dev \
+            libbz2-dev \
+            libpcre3-dev \
+            liblzma-dev \
+            libicu-dev \
+            libxml2-dev \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libpng-dev \
+            tcl8.6-dev tk8.6-dev \
+            libnetcdf-dev \
+            ed \
+            libcairo2-dev \
+            libudunits2-0 libudunits2-dev \
+            libgdal-dev libgeos-dev \
+            default-jdk default-jre \
+            libmpfr-dev \
+            jags
+
+## Some additional packages helpful to have in container
+## less is needed for help(foo) in R
+RUN apt-get install --yes vim \
+                          less
+
+## Files produced by `find_packages_3.4.R` when that is run on a
+## current installation of R.
+COPY cran_packages_3.4.csv /tmp/cran_packages.csv
+COPY bioc_packages_3.4.csv /tmp/bioc_packages.csv
+COPY later_packages_3.4.csv /tmp/later_packages.csv
+
+## Set up R's paths to where packages are installed.
+RUN sed -i "s/R_LIBS_USER='\/usr\/local\/lib\/R\/site-library'//" /usr/local/lib/R/etc/Renviron  # ensure that R_LIBS_USER set such that users can install packages in their home directory
+RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron  # ensure that R_LIBS_USER takes precedence
+
+## Set default CRAN repository to same snapshot as used to install packages.
+RUN sed -i "s/2018-03-15/${MRAN_DATE}/" /usr/local/lib/R/etc/Rprofile.site
+
+## Install CRAN packages
+RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs, repos = 'https://mran.microsoft.com/snapshot/${MRAN_DATE}')"
+
+## Install Bioconductor packages
+RUN Rscript -e "source('http://bioconductor.org/biocLite.R'); pkgs <- read.csv('/tmp/bioc_packages.csv', stringsAsFactors = FALSE)[,1]; biocLite(pkgs, suppressUpdates=TRUE, ask=FALSE)"
+## Note that Bioconductor often (always?) re-installs CRAN packages on
+## which Bioconductor packges depend. This is frustrating.
+## For later versions of Bioconductor, do this instead of `biocLite`:
+## RUN Rscript -e "install.packages('BiocManager', repos = 'https://mran.microsoft.com/snapshot/${MRAN_DATE}'); pkgs <- read.csv('/tmp/bioc_packages.csv', stringsAsFactors = FALSE)[,1]; BiocManager::install(bioc_pkgs, ask=FALSE, version = '3.6')"
+
+## Install CRAN packages that depend on Bioconductor packages
+RUN Rscript -e "pkgs <- read.csv('/tmp/later_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs, repos = 'https://mran.microsoft.com/snapshot/${MRAN_DATE}')"
+
+
+WORKDIR /workspace
+
+## use CMD not ENTRYPOINT so can override it (e.g., for Rscript)
+CMD R
+
+## for SCF
+
+RUN mkdir -p /scratch/users
+
+## for Savio
+
+RUN mkdir -p /global/scratch && mkdir -p /global/home/users
+
+
+
+

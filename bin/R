@@ -1,0 +1,32 @@
+#!/bin/bash
+
+UDOCKER_ROOT=/var/tmp/udocker
+IMAGE="paciorek/r-test:0.4"
+CONTAINER="r-test-0-4"
+
+if [ ! -d ${UDOCKER_ROOT} ]; then
+	udocker mkrepo ${UDOCKER_ROOT}
+fi
+UDOCKER="udocker --repo=${UDOCKER_ROOT}"
+
+# udocker has minimal output formatting. this check is not robust
+if [ -z "$(${UDOCKER} images | grep ${IMAGE})" ]; then
+	${UDOCKER} pull ${IMAGE}
+fi
+
+# udocker has minimal output formatting. this check is not robust
+if [ -z "$(${UDOCKER} ps | grep ${CONTAINER})" ]; then
+    ${UDOCKER} create --name=${CONTAINER} ${IMAGE}
+fi
+
+${UDOCKER} --quiet run \
+	   --workdir=${PWD} \
+	   --bindhome \
+	   --hostenv \
+	   -v /tmp:/tmp \
+	   -v /var/tmp:/var/tmp \
+	   -v /scratch/users/${USER}:/scratch/users/${USER} \
+	   --user ${USER} \
+	   --env HOME=${HOME} \
+	   ${CONTAINER} R "$@"
+

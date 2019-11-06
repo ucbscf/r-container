@@ -1,0 +1,28 @@
+FROM rocker/r-ver:3.4.3
+
+ENV TZ America/Los_Angeles
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
+RUN apt-get -qq update --yes && \
+    apt-get install --yes tzdata \
+    ssh 
+
+RUN sed -i "s/R_LIBS_USER='\/usr\/local\/lib\/R\/site-library'//" /usr/local/lib/R/etc/Renviron  # ensure that R_LIBS_USER set such that users can install packages in their home directory
+RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron  # ensure that R_LIBS_USER takes precedence
+ 
+WORKDIR /workspace
+
+CMD R
+
+## for SCF
+
+RUN mkdir -p /scratch/users
+
+## for Savio
+
+RUN mkdir -p /global/scratch && mkdir -p /global/home/users
+
+
+
+
