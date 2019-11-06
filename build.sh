@@ -1,5 +1,6 @@
 ## prepare .csv files with package listings, using installed R of your choice,
 ## in this case R 3.4.
+## This creates the files {cran,bioc,later}_packages-3.4.csv
 Rscript -e "source('find_packages_3.4.R')"
 
 ## testing
@@ -12,9 +13,10 @@ REPO=/var/tmp/udocker
 # can't use periods in container names
 VERSIONDASH=$(echo $VERSION | sed "s/\./\-/g")
 
+## Create docker container
 docker build -f Dockerfile.full -t ${CONTAINER}:${VERSION} .
 
-## Test to make sure container seems ok:
+## Test to make sure container seems ok.
 docker run -it --rm ${CONTAINER}:${VERSION}
 
 ## Push container to Dockerhub
