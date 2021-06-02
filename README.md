@@ -3,7 +3,7 @@ Containerized version of SCF R environment for Docker, udocker, and Singularity.
 
 ## Building the container
 
-`build.sh` will build Docker, udocker, and Singularity containers that mimic the R SCF environment for R 3.4.3 including (almost) all R packages we provide. (As a result the container is rather large.)
+`build.sh` will build Docker, udocker, and Singularity containers that mimic the R SCF environment for R 4.0.3 including (almost) all R packages we provide. (As a result the container is rather large.)
 
 ## Using the container
 
@@ -13,7 +13,7 @@ For use on the SCF, the files in `bin` are the wrappers for udocker (similar to 
 
 ## Notes
 
-We rely on the Rocker project's rocker/r-ver:3.4.3 Docker container, which is built on a base Debian image. Note that we could presumably build off an Ubuntu image using the code in the rocker Dockerfile.
+We rely on the Rocker project's rocker/r-ver:4.0.3 Docker container, which is built on a base Debian image. Note that we could presumably build off an Ubuntu image using the code in the rocker Dockerfile.
 
 If we wanted to provide RStudio, we would likely build off rocker/rstudio. Per Rocker documentation: The rocker/rstudio image builds with the latest version of RStudio by default. This can be customized by specifying the desired version in --build-arg RSTUDIO_VERSION=<VERSION> if building locally from its Dockerfile.
 
