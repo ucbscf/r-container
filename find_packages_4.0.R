@@ -1,8 +1,8 @@
 #### Try to pin to date just before next Bioc came out
 
-pkgs <- installed.packages('/system/linux/lib/R-18.04/3.6/x86_64/site-library')
-all_bioc_pkgs <- available.packages(repos = 'https://bioconductor.org/packages/3.10/bioc')
-all_cran_pkgs <- available.packages(repos = 'https://mran.microsoft.com/snapshot/2019-08-13')
+pkgs <- installed.packages('/system/linux/lib/R-20.04/4.0/x86_64/site-library')
+all_bioc_pkgs <- available.packages(repos = 'https://bioconductor.org/packages/3.12/bioc')
+all_cran_pkgs <- available.packages(repos = 'https://mran.microsoft.com/snapshot/2020-06-05')
 inbioc <- pkgs[,'Package'] %in% all_bioc_pkgs[,'Package']
 incran <- pkgs[,'Package'] %in% all_cran_pkgs[,'Package']
 bioc_pkgs <- pkgs[inbioc, ]
