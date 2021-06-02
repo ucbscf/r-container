@@ -1,4 +1,4 @@
-FROM rocker/r-ver:3.6.1
+FROM rocker/r-ver:4.0.3
 
 ENV TZ America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -6,13 +6,13 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV MRAN_DATE 2019-08-13
+ENV MRAN_DATE 2020-06-05
 ## Need to find the date used by Rocker by starting a container using the Rocker image 
 ## and looking in /usr/local/lib/R/etc/Rprofile.site
-ENV ROCKER_DATE 2019-12-12
+ENV ROCKER_DATE 2021-02-17
 
-ENV R_VER 3.6
-ENV BIOC_VER 3.9
+ENV R_VER 4.0
+ENV BIOC_VER 3.12
 
 RUN apt-get -qq update --yes && \
     apt-get install --yes tzdata \
