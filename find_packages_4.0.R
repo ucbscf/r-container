@@ -13,6 +13,6 @@ install_later <- c('NBPSeq','PMA','jackstraw','samr','gRain','gRbase','PSCBS','a
 ## iplots needs X11, others missing bioc dependencies, so install others after bioc pkgs
 cran_pkgs <- cran_pkgs[!cran_pkgs[,'Package'] %in% c(install_later, install_skip), ]
 
-write.table(as.data.frame(bioc_pkgs)[ , c('Package','Version')], 'bioc_packages_3.6.csv', row.names = FALSE, col.names = TRUE, quote = FALSE, sep = ',')
-write.table(as.data.frame(cran_pkgs)[ , c('Package','Version')], 'cran_packages_3.6.csv', row.names = FALSE, col.names = TRUE, quote = FALSE, sep = ',')
-write.table(as.data.frame(install_later), 'later_packages_3.6.csv', row.names = FALSE, col.names = TRUE, quote = FALSE, sep = ',')
+write.table(as.data.frame(bioc_pkgs)[ , c('Package','Version')], 'bioc_packages_4.0.csv', row.names = FALSE, col.names = TRUE, quote = FALSE, sep = ',')
+write.table(as.data.frame(cran_pkgs)[ , c('Package','Version')], 'cran_packages_4.0.csv', row.names = FALSE, col.names = TRUE, quote = FALSE, sep = ',')
+write.table(as.data.frame(install_later), 'later_packages_4.0.csv', row.names = FALSE, col.names = TRUE, quote = FALSE, sep = ',')
