@@ -48,6 +48,7 @@ RUN apt-get install --yes libgsl-dev \
             libgdal-dev libgeos-dev \
             default-jdk default-jre \
             libmpfr-dev \
+            libnode-dev \
             jags
 
 ## Some additional packages helpful to have in container
@@ -66,7 +67,7 @@ RUN sed -i "s/R_LIBS_USER='\/usr\/local\/lib\/R\/site-library'//" /usr/local/lib
 RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron  # ensure that R_LIBS_USER takes precedence
 
 ## Set default CRAN repository to same snapshot as used to install packages.
-RUN sed -i "s/${ROCKER_DATE}/${MRAN_DATE}/" /usr/local/lib/R/etc/Rprofile.site
+RUN sed -i "s/https:\/\/packagemanager.rstudio.com\/cran\/__linux__\/focal\/${ROCKER_DATE}/https:\/\/mran.microsoft.com\/snapshot\/${MRAN_DATE}/" /usr/local/lib/R/etc/Rprofile.site
 
 ## Install CRAN packages
 RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs, repos = 'https://mran.microsoft.com/snapshot/${MRAN_DATE}')"
