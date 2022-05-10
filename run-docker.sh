@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.4
+VERSION=4.1.0
 
 ## basic usage
 docker run -it --rm r-test:${VERSION}
