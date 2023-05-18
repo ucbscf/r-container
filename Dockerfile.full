@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.2.0
+FROM rocker/r-ver:4.2.2
 
 ENV TZ America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -6,17 +6,17 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV MRAN_DATE 2022-05-09
+ENV MRAN_DATE 2023-02-06
 
 ## _UPDATE is needed for 4.1.0 because Bioc update of MatrixGenerics needs later matrixStats
 ## ENV MRAN_DATE_UPDATE 2021-08-24   
 
 ## Need to find the date used by Rocker by starting a container using the Rocker image 
 ## and looking in /usr/local/lib/R/etc/Rprofile.site
-ENV ROCKER_DATE 2022-06-22
+ENV ROCKER_DATE 2023-03-14
 
-ENV R_VER 4.2.0
-ENV BIOC_VER 3.15
+ENV R_VER 4.2.2
+ENV BIOC_VER 3.16
 
 RUN apt-get -qq update --yes && \
     apt-get install --yes tzdata \
@@ -59,6 +59,7 @@ RUN apt-get install --yes libgsl-dev \
             cmake \
             libprotobuf-dev \
             protobuf-compiler \
+            libgit2-dev \
             jags
 
 ## Some additional packages helpful to have in container

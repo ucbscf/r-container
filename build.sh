@@ -2,12 +2,12 @@
 ## in this case R 4.2.0
 ## This creates the files {cran,bioc,later}_packages-4.2.0.csv
 
-Rscript -e "source('find_packages_4.2.0.R')"
+Rscript -e "source('find_packages_4.2.2.R')"
 
 ## testing
-## docker run -it --rm rocker/r-ver:4.2.0
+## docker run -it --rm rocker/r-ver:4.2.2
 
-VERSION=4.2.0
+VERSION=4.2.2
 DOCKER_USER=paciorek
 CONTAINER=r-scf
 REPO=/var/tmp/udocker
@@ -15,7 +15,7 @@ REPO=/var/tmp/udocker
 VERSIONDASH=$(echo $VERSION | sed "s/\./\-/g")
 
 ## Create docker container. First check that the lines in Dockerfile.full that modify the R/etc files are still correct for this rocker version.
-docker build -f Dockerfile.full -t ${CONTAINER}:${VERSION} . | tee build.log
+docker build -f Dockerfile.full -t ${CONTAINER}:${VERSION} . | tee build-${VERSION}.log
 
 ## Examine build.log for errors:
 ## Search for:
