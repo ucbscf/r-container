@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.2.2
+FROM rocker/r-ver:4.3.0
 
 ENV TZ America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -6,17 +6,10 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV MRAN_DATE 2023-02-06
+ENV ROCKER_DATE 2023-05-18
 
-## _UPDATE is needed for 4.1.0 because Bioc update of MatrixGenerics needs later matrixStats
-## ENV MRAN_DATE_UPDATE 2021-08-24   
-
-## Need to find the date used by Rocker by starting a container using the Rocker image 
-## and looking in /usr/local/lib/R/etc/Rprofile.site
-ENV ROCKER_DATE 2023-03-14
-
-ENV R_VER 4.2.2
-ENV BIOC_VER 3.16
+ENV R_VER 4.3.0
+ENV BIOC_VER 3.17
 
 RUN apt-get -qq update --yes && \
     apt-get install --yes tzdata \
@@ -67,7 +60,7 @@ RUN apt-get install --yes libgsl-dev \
 RUN apt-get install --yes vim \
                           less
 
-## Files produced by `find_packages_4.1.R` when that is run on a
+## Files produced by `find_packages_4.x.y.R` when that is run on a
 ## current installation of R.
 COPY cran_packages_${R_VER}.csv /tmp/cran_packages.csv
 ## COPY cran_packages_update_${R_VER}.csv /tmp/cran_packages_update.csv
@@ -78,13 +71,11 @@ COPY bioc_packages_${R_VER}.csv /tmp/bioc_packages.csv
 ## RUN sed -i "s/R_LIBS_USER='\/usr\/local\/lib\/R\/site-library'//" /usr/local/lib/R/etc/Renviron  # ensure that R_LIBS_USER set such that users can install packages in their home directory  # no longer needed as of rocker/r-ver:4.0.3
 RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron.site  # ensure that R_LIBS_USER takes precedence
 
-## Set default CRAN repository to same snapshot as used to install packages.
-RUN sed -i "s/https:\/\/packagemanager.rstudio.com\/cran\/__linux__\/focal\/${ROCKER_DATE}/https:\/\/mran.microsoft.com\/snapshot\/${MRAN_DATE}/" /usr/local/lib/R/etc/Rprofile.site
+## Set default repository to same snapshot as used to install packages. Check that the repository given in `Rprofile.site` in the container is `https://packagemanager.posit.co/cran/__linux__/jammy/${ROCKER_DATE}`.
+RUN sed -i "s/jammy\/latest/jammy\/${ROCKER_DATE}/" /usr/local/lib/R/etc/Rprofile.site
 
 ## Install CRAN packages
-RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs, repos = 'https://mran.microsoft.com/snapshot/${MRAN_DATE}')"
-
-## RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages_update.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs, repos = 'https://mran.microsoft.com/snapshot/${MRAN_DATE_UPDATE}')"
+RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs)"
 
 ## Install Bioconductor packages
 ## For earlier versions of Bioconductor, do this instead of `BiocManager`:
@@ -92,12 +83,15 @@ RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FA
 ## Note that Bioconductor often (always?) re-installs CRAN packages on
 ## which Bioconductor packges depend. This is frustrating.
 ## For later versions of Bioconductor, do this instead of `biocLite`:
-RUN Rscript -e "install.packages('BiocManager', repos = 'https://mran.microsoft.com/snapshot/${MRAN_DATE}'); pkgs <- read.csv('/tmp/bioc_packages.csv', stringsAsFactors = FALSE)[,1]; BiocManager::install('BiocVersion', update=FALSE, ask=FALSE, version = \"${BIOC_VER}\"); BiocManager::install(pkgs, update=FALSE, ask=FALSE, version = \"${BIOC_VER}\")"
+RUN Rscript -e "install.packages('BiocManager'); pkgs <- read.csv('/tmp/bioc_packages.csv', stringsAsFactors = FALSE)[,1]; BiocManager::install('BiocVersion', update=FALSE, ask=FALSE, version = \"${BIOC_VER}\"); BiocManager::install(pkgs, update=FALSE, ask=FALSE, version = \"${BIOC_VER}\")"
 
 COPY later_packages_${R_VER}.csv /tmp/later_packages.csv
 
 ## Install CRAN packages that depend on Bioconductor packages
-RUN Rscript -e "pkgs <- read.csv('/tmp/later_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs, repos = 'https://mran.microsoft.com/snapshot/${MRAN_DATE}')"
+RUN Rscript -e "pkgs <- read.csv('/tmp/later_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs)"
+
+## Install INLA
+RUN Rscript -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
 
 WORKDIR /workspace
 

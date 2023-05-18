@@ -2,12 +2,12 @@
 ## in this case R 4.2.0
 ## This creates the files {cran,bioc,later}_packages-4.2.0.csv
 
-Rscript -e "source('find_packages_4.2.2.R')"
+Rscript -e "source('find_packages_4.3.0.R')"
 
 ## testing
-## docker run -it --rm rocker/r-ver:4.2.2
+## docker run -it --rm rocker/r-ver:4.3.0
 
-VERSION=4.2.2
+VERSION=4.3.0
 DOCKER_USER=paciorek
 CONTAINER=r-scf
 REPO=/var/tmp/udocker
