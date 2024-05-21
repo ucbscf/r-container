@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.3.2
+FROM rocker/r-ver:4.4.0
 
 ENV TZ America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -6,10 +6,10 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV ROCKER_DATE 2023-11-20
+ENV ROCKER_DATE 2024-05-17
 
-ENV R_VER 4.3.2
-ENV BIOC_VER 3.18
+ENV R_VER 4.4.0
+ENV BIOC_VER 3.19
 
 RUN apt-get -qq update --yes && \
     apt-get install --yes tzdata \
@@ -69,10 +69,10 @@ COPY bioc_packages_${R_VER}.csv /tmp/bioc_packages.csv
 
 ## Set up R's paths to where packages are installed.
 ## RUN sed -i "s/R_LIBS_USER='\/usr\/local\/lib\/R\/site-library'//" /usr/local/lib/R/etc/Renviron  # ensure that R_LIBS_USER set such that users can install packages in their home directory  # no longer needed as of rocker/r-ver:4.0.3
-## As of R 4.3.2, not seeing an `RLIBS=` line in Renviron.site.
-## RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron.site  # ensure that R_LIBS_USER takes precedence
+## (Noted previously, but doesn't seem to be correct: In R 4.3.2, not seeing an `RLIBS=` line in Renviron.site.)
+RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron.site  # ensure that R_LIBS_USER takes precedence
 
-## Set default repository to same snapshot as used to install packages. Check that the repository given in `Rprofile.site` in the container is `https://p3m.dev/cran/__linux__/jammy/${ROCKER_DATE}`.
+## Set default repository to same snapshot as used to install packages. Check that the repository given in `Rprofile.site` in the container is `https://p3m.dev/cran/__linux__/jammy/latest`.
 RUN sed -i "s/jammy\/latest/jammy\/${ROCKER_DATE}/" /usr/local/lib/R/etc/Rprofile.site
 
 ## Install CRAN packages

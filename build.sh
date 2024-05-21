@@ -1,13 +1,13 @@
 ## prepare .csv files with package listings, using installed R of your choice,
-## in this case R 4.3.2
-## This creates the files {cran,bioc,later}_packages-4.3.2.csv
+## in this case R 4.4.0
+## This creates the files {cran,bioc,later}_packages-${VERSION}.csv
 
-Rscript -e "source('find_packages_4.3.2.R')"
+Rscript -e "source('find_packages_4.4.0.R')"
 
 ## testing
-## docker run -it --rm rocker/r-ver:4.3.2
+## docker run -it --rm rocker/r-ver:4.4.0
 
-VERSION=4.3.2
+VERSION=4.4.0
 DOCKER_USER=paciorek
 CONTAINER=r-scf
 REPO=/var/tmp/udocker
