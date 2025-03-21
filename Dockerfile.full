@@ -89,7 +89,8 @@ RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron.site  # ensur
 RUN sed -i "s/p3m.dev\/cran\/__linux__\/noble\/latest/packagemanager.posit.co\/cran\/__linux__\/noble\/${POSIT_DATE}/" /usr/local/lib/R/etc/Rprofile.site
 
 ## Install CRAN packages
-RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs)"
+RUN Rscript -e "install.packages('renv')"
+RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE)[,1]; renv::install(pkgs)"
 
 ## Install Bioconductor packages
 ## For earlier versions of Bioconductor, do this instead of `BiocManager`:
