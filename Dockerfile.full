@@ -86,7 +86,7 @@ RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron.site  # ensur
 ## Set default repository to same snapshot as used to install packages via renv.
 ## https://packagemanager.posit.co/cran/__linux__/noble/2025-03-19
 ## Check that the repository given in `Rprofile.site` in the container is `https://p3m.dev/cran/__linux__/noble/latest` so that this `sed` invocation works.
-RUN sed -i "s/p3m.dev\/cran\/__linux__\/noble/latest\//packagemanager.posit.co\/cran\/__linux__\/noble\/${POSIT_DATE}/" /usr/local/lib/R/etc/Rprofile.site
+RUN sed -i "s/p3m.dev\/cran\/__linux__\/noble\/latest/packagemanager.posit.co\/cran\/__linux__\/noble\/${POSIT_DATE}/" /usr/local/lib/R/etc/Rprofile.site
 
 ## Install CRAN packages
 RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs)"
