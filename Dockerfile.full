@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.4.0
+FROM rocker/r-ver:4.4.3
 
 ENV TZ America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -6,10 +6,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV ROCKER_DATE 2024-05-17
+ENV ROCKER_DATE 2025-03-19
+ENV POSIT_DATE 2025-03-19
 
-ENV R_VER 4.4.0
-ENV BIOC_VER 3.19
+ENV R_VER 4.4.3
+ENV BIOC_VER 3.20
 
 RUN apt-get -qq update --yes && \
     apt-get install --yes tzdata \
@@ -53,7 +54,17 @@ RUN apt-get install --yes libgsl-dev \
             libprotobuf-dev \
             protobuf-compiler \
             libgit2-dev \
-            jags
+            jags \
+            coinor-symphony \
+            dcraw \
+            gsfonts \
+            libapparmor-dev \
+            libgmp3-dev \
+            libprotoc-dev \
+            libsecret-1-dev \
+            tk-table
+            
+            
 
 ## Some additional packages helpful to have in container
 ## less is needed for help(foo) in R
@@ -72,8 +83,10 @@ COPY bioc_packages_${R_VER}.csv /tmp/bioc_packages.csv
 ## (Noted previously, but doesn't seem to be correct: In R 4.3.2, not seeing an `RLIBS=` line in Renviron.site.)
 RUN sed -i "s/R_LIBS=/R_LIBS_SITE=/" /usr/local/lib/R/etc/Renviron.site  # ensure that R_LIBS_USER takes precedence
 
-## Set default repository to same snapshot as used to install packages. Check that the repository given in `Rprofile.site` in the container is `https://p3m.dev/cran/__linux__/jammy/latest`.
-RUN sed -i "s/jammy\/latest/jammy\/${ROCKER_DATE}/" /usr/local/lib/R/etc/Rprofile.site
+## Set default repository to same snapshot as used to install packages via renv.
+## https://packagemanager.posit.co/cran/__linux__/noble/2025-03-19
+## Check that the repository given in `Rprofile.site` in the container is `https://p3m.dev/cran/__linux__/noble/latest` so that this `sed` invocation works.
+RUN sed -i "s/p3m.dev\/cran\/__linux__\/noble/latest\//packagemanager.posit.co\/cran\/__linux__\/noble\/${POSIT_DATE}/" /usr/local/lib/R/etc/Rprofile.site
 
 ## Install CRAN packages
 RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE)[,1]; install.packages(pkgs)"
