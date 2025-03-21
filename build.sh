@@ -15,7 +15,7 @@ REPO=/var/tmp/udocker
 VERSIONDASH=$(echo $VERSION | sed "s/\./\-/g")
 
 ## Create docker container. First check that the lines in Dockerfile.full that modify the R/etc file(s) are still correct for this rocker version.
-docker build -f Dockerfile.full -t ${CONTAINER}:${VERSION} . | tee build-${VERSION}.log
+docker build -f Dockerfile_renv.full -t ${CONTAINER}:${VERSION} . | tee build-${VERSION}.log
 
 ## Examine build.log for errors:
 ## Search for:
