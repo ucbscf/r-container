@@ -91,14 +91,12 @@ RUN sed -i "s/p3m.dev\/cran\/__linux__\/noble\/latest/packagemanager.posit.co\/c
 ## Install CRAN packages
 RUN Rscript -e "install.packages('renv')"
 ## Use specific-versions as otherwise renv::install has problems with Rcpp, waveslim, locfit.
-RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE); pkgs <- paste0(pkgs[,1], '@', pkgs[,2]); renv::install(pkgs)"
+## Not sure what it is trying to install very old `graph` from CRAN.
+RUN Rscript -e "pkgs <- read.csv('/tmp/cran_packages.csv', stringsAsFactors = FALSE); pkgs <- paste0(pkgs[,1], '@', pkgs[,2]); renv::install(pkgs, exclude='graph)'"
 
 ## Install Bioconductor packages
 ## For earlier versions of Bioconductor, do this instead of `BiocManager`:
 ## RUN Rscript -e "source('http://bioconductor.org/biocLite.R'); pkgs <- read.csv('/tmp/bioc_packages.csv', stringsAsFactors = FALSE)[,1]; biocLite(pkgs, suppressUpdates=TRUE, ask=FALSE)"
-## Note that Bioconductor often (always?) re-installs CRAN packages on
-## which Bioconductor packges depend. This is frustrating.
-## For later versions of Bioconductor, do this instead of `biocLite`:
 RUN Rscript -e "install.packages('BiocManager'); pkgs <- read.csv('/tmp/bioc_packages.csv', stringsAsFactors = FALSE)[,1]; BiocManager::install('BiocVersion', update=FALSE, ask=FALSE, version = \"${BIOC_VER}\"); BiocManager::install(pkgs, update=FALSE, ask=FALSE, version = \"${BIOC_VER}\")"
 
 COPY later_packages_${R_VER}.csv /tmp/later_packages.csv
