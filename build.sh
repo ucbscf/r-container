@@ -31,6 +31,10 @@ docker login --username=${DOCKER_USER}
 docker tag ${CONTAINER}:${VERSION} ${DOCKER_USER}/${CONTAINER}:${VERSION}
 docker push ${DOCKER_USER}/${CONTAINER}:${VERSION}
 
+## Create enroot sqsh file
+# cd /usr/local/linux/R-4.4.4
+enroot import docker://${DOCKER_USER}/${CONTAINER}:${VERSION}
+
 ## Create udocker container (if desired for testing; not required as the R-${VERSION}/bin/R script will do all this.
 udocker mkrepo ${REPO}
 udocker --repo=${REPO} pull ${DOCKER_USER}/${CONTAINER}:${VERSION}
