@@ -23,7 +23,7 @@ bioc_pkgs <- rbind(cran_pkgs['NMF', ], bioc_pkgs)
 ## Note that the 'Version' column is not actually used when we create the image, as we rely on the MRAN snapshot date and the Bioc version to control that.
 
 # cran_pkgs <- cran_pkgs[!cran_pkgs[,'Package'] %in% c(install_later, install_update, install_skip), ]
-cran_pkgs <- cran_pkgs[!cran_pkgs[,'Package'] %in% c(install_skip), ]
+cran_pkgs <- cran_pkgs[!cran_pkgs[,'Package'] %in% c(install_later, install_skip), ]
 
 
 write.table(bioc_pkgs, paste0('bioc_packages_', R_VERSION, '.csv'), row.names = FALSE, col.names = TRUE, quote = FALSE, sep = ',')
