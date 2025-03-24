@@ -3,7 +3,7 @@ Containerized version of SCF R environment for Docker and enroot (and possibly u
 
 ## Building the container
 
-`build.sh` will build Docker, udocker, and Singularity containers that mimic the R SCF environment for R X.Y.Z including (almost) all R packages we provide. (As a result the container is rather large.)
+`build.sh` will build Docker, enroot, udocker, and Singularity containers that mimic the R SCF environment for R X.Y.Z including (almost) all R packages we provide. (As a result the container is rather large.)
 
 ## Using the container
 
