@@ -32,7 +32,14 @@ docker tag ${CONTAINER}:${VERSION} ${DOCKER_USER}/${CONTAINER}:${VERSION}
 docker push ${DOCKER_USER}/${CONTAINER}:${VERSION}
 
 ## Create enroot sqsh file
-# cd /usr/local/linux/R-4.5.0
+## As scf:
+d /usr/local/linux/R-${VERSION}
+ENROOT_ROOT=/var/tmp/enroot
+export ENROOT_RUNTIME_PATH=${ENROOT_ROOT}/runtime
+export ENROOT_CACHE_PATH=${ENROOT_ROOT}/cache
+export ENROOT_CONFIG_PATH=${ENROOT_ROOT}/config
+export ENROOT_DATA_PATH=${ENROOT_ROOT}/data
+
 enroot import docker://${DOCKER_USER}/${CONTAINER}:${VERSION}
 
 ## OLD: We are no longer making use of udocker.
