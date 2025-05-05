@@ -1,16 +1,16 @@
 ## prepare .csv files with package listings, using installed R of your choice,
-## in this case R 4.4.3
+## in this case R 4.5.0
 ## This creates the files {cran,bioc,later}_packages-${VERSION}.csv
 
-Rscript -e "source('find_packages_4.4.3.R')"
+Rscript -e "source('find_packages_4.5.0.R')"
 
 ## testing
-## docker run -it --rm rocker/r-ver:4.4.3
+## docker run -it --rm rocker/r-ver:4.5.0
 
-VERSION=4.4.3
+VERSION=4.5.0
 DOCKER_USER=paciorek
 CONTAINER=r-scf
-REPO=/var/tmp/udocker
+
 # can't use periods in container names
 VERSIONDASH=$(echo $VERSION | sed "s/\./\-/g")
 
@@ -32,15 +32,16 @@ docker tag ${CONTAINER}:${VERSION} ${DOCKER_USER}/${CONTAINER}:${VERSION}
 docker push ${DOCKER_USER}/${CONTAINER}:${VERSION}
 
 ## Create enroot sqsh file
-# cd /usr/local/linux/R-4.4.4
+# cd /usr/local/linux/R-4.5.0
 enroot import docker://${DOCKER_USER}/${CONTAINER}:${VERSION}
 
+## OLD: We are no longer making use of udocker.
 ## Create udocker container (if desired for testing; not required as the R-${VERSION}/bin/R script will do all this.
+REPO=/var/tmp/udocker
 udocker mkrepo ${REPO}
 udocker --repo=${REPO} pull ${DOCKER_USER}/${CONTAINER}:${VERSION}
 ## udocker --repo=${REPO} rm ${CONTAINER}-${VERSIONDASH}
 udocker --repo=${REPO} create --name=${CONTAINER}-${VERSIONDASH} ${DOCKER_USER}/${CONTAINER}:${VERSION}
-## udocker --repo=${REPO} setup ${CONTAINER}-${VERSIONDASH}
 
 ## Create Singularity container (if desired; not used on SCF per se).
 sudo singularity build ${CONTAINER}-${VERSIONDASH}.simg docker://${DOCKER_USER}/${CONTAINER}:${VERSION}

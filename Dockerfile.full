@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.4.3
+FROM rocker/r-ver:4.5.0
 
 ENV TZ America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -6,11 +6,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV ROCKER_DATE 2025-03-19
-ENV POSIT_DATE 2025-03-19
+ENV ROCKER_DATE 2025-04-30
+ENV POSIT_DATE 2025-04-30
 
-ENV R_VER 4.4.3
-ENV BIOC_VER 3.20
+ENV R_VER 4.5.0
+ENV BIOC_VER 3.21
 
 RUN apt-get -qq update --yes && \
     apt-get install --yes tzdata \
@@ -62,8 +62,14 @@ RUN apt-get install --yes libgsl-dev \
             libgmp3-dev \
             libprotoc-dev \
             libsecret-1-dev \
-            tk-table
+            tk-table \
+            gdal-bin \  
+            git \       
+            pandoc      
             
+# - gdal-bin  [required by sf, concaveman, terra]
+# - git       [required by remotes, credentials, gitcreds]
+# - pandoc    [required by bayesplot, loo, rstantools, knitr, rmarkdown, pkgdown, reprex]
             
 
 ## Some additional packages helpful to have in container
