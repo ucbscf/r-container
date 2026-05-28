@@ -2,12 +2,12 @@
 ## in this case R 4.5.0
 ## This creates the files {cran,bioc,later}_packages-${VERSION}.csv
 
-Rscript -e "source('find_packages_4.5.0.R')"
+Rscript -e "source('find_packages_4.6.0.R')"
 
 ## testing
 ## docker run -it --rm rocker/r-ver:4.5.0
 
-VERSION=4.5.0
+VERSION=4.6.0
 DOCKER_USER=paciorek
 CONTAINER=r-scf
 
@@ -33,7 +33,7 @@ docker push ${DOCKER_USER}/${CONTAINER}:${VERSION}
 
 ## Create enroot sqsh file
 ## As scf:
-d /usr/local/linux/R-${VERSION}
+mkdir /usr/local/linux/R-${VERSION}
 ENROOT_ROOT=/var/tmp/enroot
 export ENROOT_RUNTIME_PATH=${ENROOT_ROOT}/runtime
 export ENROOT_CACHE_PATH=${ENROOT_ROOT}/cache
